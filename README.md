@@ -8,10 +8,10 @@ This repository is for some useful machine learning and computer science books t
   * [算法心得：高效算法的奥秘(第2版).pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Algorithms/算法心得：高效算法的奥秘(第2版).pdf)
 
 
-## Big data
-  * [Kafka权威指南.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Big data/Kafka权威指南.pdf)
-  * [Meituan algorithm practice book 2019.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Big data/Meituan%20algorithm%20practice%20book%202019.pdf)
-  * [redis设计与实现第二版.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Big data/redis设计与实现第二版.pdf)
+## BigData
+  * [Kafka权威指南.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/BigData/Kafka权威指南.pdf)
+  * [Meituan algorithm practice book 2019.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/BigData/Meituan%20algorithm%20practice%20book%202019.pdf)
+  * [redis设计与实现第二版.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/BigData/redis设计与实现第二版.pdf)
 
 
 ## Database
@@ -73,7 +73,15 @@ This repository is for some useful machine learning and computer science books t
 
 
 ## Javascript
+  * [ES6 编码规范 - Tower.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/ES6%20编码规范%20-%20Tower.pdf)
+  * [es6手册.md](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/es6手册.md)
+  * [ES6标准入门（第二版）.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/ES6标准入门（第二版）.pdf)
+  * [JavaScript设计模式与开发实践.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/JavaScript设计模式与开发实践.pdf)
   * [JavaScript高级程序设计（第3版）】中文 高清 完整 详细书签版.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/JavaScript高级程序设计（第3版）】中文%20高清%20完整%20详细书签版.pdf)
+  * [React 中文版 - v1.1.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/React%20中文版%20-%20v1.1.pdf)
+  * [Redux 官方文档中文翻译.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/Redux%20官方文档中文翻译.pdf)
+  * [webpack 思维导图.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/webpack%20思维导图.pdf)
+  * [深入浅出ES6.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Javascript/深入浅出ES6.pdf)
 
 
 ## Kubernetes
@@ -81,10 +89,10 @@ This repository is for some useful machine learning and computer science books t
   * [kubernetes.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Kubernetes/kubernetes.pdf)
 
 
-## Machine learning
-  * [Hands on Machine Learning with Scikit Learn and Tensorflow.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Machine learning/Hands%20on%20Machine%20Learning%20with%20Scikit%20Learn%20and%20Tensorflow.pdf)
-  * [python machine learning.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Machine learning/python%20machine%20learning.pdf)
-  * [Python机器学习（Sebastian著-带书签）@www.java1234.com.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Machine learning/Python机器学习（Sebastian著-带书签）@www.java1234.com.pdf)
+## MachineLearning
+  * [Hands on Machine Learning with Scikit Learn and Tensorflow.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/MachineLearning/Hands%20on%20Machine%20Learning%20with%20Scikit%20Learn%20and%20Tensorflow.pdf)
+  * [python machine learning.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/MachineLearning/python%20machine%20learning.pdf)
+  * [Python机器学习（Sebastian著-带书签）@www.java1234.com.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/MachineLearning/Python机器学习（Sebastian著-带书签）@www.java1234.com.pdf)
 
 
 ## Mathmatics
@@ -125,17 +133,6 @@ This repository is for some useful machine learning and computer science books t
   * [编写高质量代码 改善Python程序的91个建议.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Python/编写高质量代码%20改善Python程序的91个建议.pdf)
 
 
-## React
-  * [ES6 编码规范 - Tower.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/ES6%20编码规范%20-%20Tower.pdf)
-  * [es6手册.md](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/es6手册.md)
-  * [ES6标准入门（第二版）.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/ES6标准入门（第二版）.pdf)
-  * [JavaScript设计模式与开发实践.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/JavaScript设计模式与开发实践.pdf)
-  * [React 中文版 - v1.1.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/React%20中文版%20-%20v1.1.pdf)
-  * [Redux 官方文档中文翻译.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/Redux%20官方文档中文翻译.pdf)
-  * [webpack 思维导图.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/webpack%20思维导图.pdf)
-  * [深入浅出ES6.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/React/深入浅出ES6.pdf)
-
-
 ## Redis
   * [Redis入门指南（第2版）.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Redis/Redis入门指南（第2版）.pdf)
   * [Redis实战.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Redis/Redis实战.pdf)
@@ -146,7 +143,8 @@ This repository is for some useful machine learning and computer science books t
   * [Scala编程中文版.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/Scala/Scala编程中文版.pdf)
 
 
-## System basic
-  * [深入理解计算机系统(中文版).pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/System basic/深入理解计算机系统(中文版).pdf)
-  * [程序是怎样跑起来的.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/System basic/程序是怎样跑起来的.pdf)
-  * [计算机是怎样跑起来的.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/System basic/计算机是怎样跑起来的.pdf)
+## SystemBasic
+  * [深入理解计算机系统(中文版).pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/SystemBasic/深入理解计算机系统(中文版).pdf)
+  * [程序是怎样跑起来的.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/SystemBasic/程序是怎样跑起来的.pdf)
+  * [计算机是怎样跑起来的.pdf](https://github.com/lugq1990/LearningPapers/tree/master/Books/SystemBasic/计算机是怎样跑起来的.pdf)
+
