@@ -1,0 +1,315 @@
+Classification and regression trees
+
+Classification and regression treesWei-Yin Loh
+
+Classification and regression trees are machine-learning methods for constructingprediction models from data. The models are obtained by recursively partitioningthe data space and fitting a simple prediction model within each partition. As aresult, the partitioning can be represented graphically as a decision tree. Clas-sification trees are designed for dependent variables that take a finite numberof unordered values, with prediction error measured in terms of misclassifica-tion cost. Regression trees are for dependent variables that take continuous orordered discrete values, with prediction error typically measured by the squareddifference between the observed and predicted values. This article gives an in-troduction to the subject by reviewing some widely available algorithms andcomparing their capabilities, strengths, and weakness in two examples. C© 2011 JohnWiley & Sons, Inc. WIREs Data Mining Knowl Discov 2011 1 14–23 DOI: 10.1002/widm.8
+
+I n a classification problem, we have a training sam-ple of n observations on a class variable Y thattakes values 1, 2, . . . , k, and p predictor variables,X1, . . . , Xp. Our goal is to find a model for predict-ing the values of Y from new X values. In theory, thesolution is simply a partition of the X space into kdisjoint sets, A1, A2, . . . , Ak, such that the predictedvalue of Y is j if X belongs to Aj , for j = 1, 2, . . . , k.If the X variables take ordered values, two classicalsolutions are linear discriminant analysis1 and near-est neighbor classification.2 These methods yield setsAj with piecewise linear and nonlinear, respectively,boundaries that are not easy to interpret if p is large.
+
+Classification tree methods yield rectangularsets Aj by recursively partitioning the data set oneX variable at a time. This makes the sets easier tointerpret. For example, Figure 1 gives an examplewherein there are three classes and two X variables.The left panel plots the data points and partitions andthe right panel shows the corresponding decision treestructure. A key advantage of the tree structure is itsapplicability to any number of variables, whereas theplot on its left is limited to at most two.
+
+The first published classification tree algorithmis THAID.3,4 Employing a measure of node impuritybased on the distribution of the observed Y valuesin the node, THAID splits a node by exhaustivelysearching over all X and S for the split {X ∈ S} thatminimizes the total impurity of its two child nodes. If
+
+∗Correspondence to: loh@stat.wisc.edu
+
+Department of Statistics, University of Wisconsin-Madison,Madison, WI, USA
+
+X takes ordered values, the set S is an interval of theform (−∞, c]. Otherwise, S is a subset of the valuestaken by X. The process is applied recursively on thedata in each child node. Splitting stops if the relativedecrease in impurity is below a prespecified threshold.Algorithm 1 gives the pseudocode for the basic steps.
+
+Algorithm 1 Pseudocode for tree constructionby exhaustive search
+
+1. Start at the root node.
+
+2. For each X, find the set S that minimizesthe sum of the node impurities in the twochild nodes and choose the split {X∗ ∈ S∗}that gives the minimum overall X and S.
+
+3. If a stopping criterion is reached, exit. Oth-erwise, apply step 2 to each child node inturn.
+
+C4.55 and CART6 are two later classificationtree algorithms that follow this approach. C4.5 usesentropy for its impurity function, whereas CARTuses a generalization of the binomial variance calledthe Gini index. Unlike THAID, however, they firstgrow an overly large tree and then prune it to asmaller size to minimize an estimate of the misclassi-fication error. CART employs 10-fold (default) cross-validation, whereass C4.5 uses a heuristic formula toestimate error rates. CART is implemented in the Rsystem7 as RPART,8 which we use in the examplesbelow.
+
+Despite its simplicity and elegance, the ex-haustive search approach has an undesirable prop-erty. Note that an ordered variable with m distinctvalues has (m − 1) splits of the form X ≤ c, and an
+
+14 Volume 1, January /February 2011c© 2011 John Wi ley & Sons , Inc .
+
+WIREs Data Mining and Knowledge Discovery Classification and regression trees
+
+FIGURE 1 | Partitions (left) and decision tree structure (right) for a classification tree model with three classes labeled 1, 2, and 3. At eachintermediate node, a case goes to the left child node if and only if the condition is satisfied. The predicted class is given beneath each leaf node.
+
+unordered variable with m distinct unordered valueshas (2m−1 − 1) splits of the form X ∈ S. Therefore, ifeverything else is equal, variables that have more dis-tinct values have a greater chance to be selected. Thisselection bias affects the integrity of inferences drawnfrom the tree structure.
+
+Building on an idea that originated in the FACT9
+
+algorithm, CRUISE,10,11 GUIDE,12 and QUEST13 usea two-step approach based on significance tests tosplit each node. First, each X is tested for associationwith Y and the most significant variable is selected.Then, an exhaustive search is performed for the setS. Because every X has the same chance to be se-lected if each is independent of Y, this approach iseffectively free of selection bias. Besides, much com-putation is saved as the search for S is carried outonly on the selected X variable. GUIDE and CRUISEuse chi squared tests, and QUEST uses chi squaredtests for unordered variables and analysis of variance(ANOVA) tests for ordered variables. CTree,14 an-other unbiased method, uses permutation tests. Pseu-docode for the GUIDE algorithm is given in Algo-rithm 2. The CRUISE, GUIDE, and QUEST trees arepruned the same way as CART.
+
+Algorithm 2 Pseudocode for GUIDE classifica-tion tree construction
+
+1. Start at the root node.
+
+2. For each ordered variable X, convert it to anunordered variable X′ by grouping its valuesin the node into a small number of intervals.If X is unordered, set X′ = X.
+
+3. Perform a chi squared test of independenceof each X′ variable versus Y on the data inthe node and compute its significance prob-ability.
+
+4. Choose the variable X∗ associated with theX′ that has the smallest significance proba-bility.
+
+5. Find the split set {X∗ ∈ S∗} that minimizesthe sum of Gini indexes and use it to splitthe node into two child nodes.
+
+6. If a stopping criterion is reached, exit. Oth-erwise, apply steps 2–5 to each child node.
+
+7. Prune the tree with the CART method.
+
+CHAID15 employs yet another strategy. If X isan ordered variable, its data values in the node aresplit into 10 intervals and one child node is assignedto each interval. If X is unordered, one child nodeis assigned to each value of X. Then, CHAID usessignificance tests and Bonferroni corrections to try toiteratively merge pairs of child nodes. This approachhas two consequences. First, some nodes may be splitinto more than two child nodes. Second, owing to thesequential nature of the tests and the inexactness ofthe corrections, the method is biased toward selectingvariables with few distinct values.
+
+CART, CRUISE, and QUEST can allow splitson linear combinations of all the ordered variables,whereas GUIDE can split on combinations of twovariables at a time. If there are missing values, CARTand CRUISE use alternate splits on other variableswhen needed, C4.5 sends each observation with amissing value in a split through every branch using
+
+Volume 1, January /February 2011 15c© 2011 John Wi ley & Sons , Inc .
+
+Overview wires.wiley.com/widm
+
+a probability weighting scheme, QUEST imputes themissing values locally, and GUIDE treats missing val-ues as belonging to a separate category. All exceptC4.5 accept user-specified misclassification costs andall except C4.5 and CHAID accept user-specified classprior probabilities. By default, all algorithms fit a con-stant model to each node, predicting Y to be the classwith the smallest misclassification cost. CRUISE canoptionally fit bivariate linear discriminant models andGUIDE can fit bivariate kernel density and nearestneighbor models in the nodes. GUIDE also can pro-duce ensemble models using bagging16 and randomforest17 techniques. Table 1 summarizes the featuresof the algorithms.
+
+To see how the algorithms perform in a real ap-plication, we apply them to a data set on new carsfor the 1993 model year.18 There are 93 cars and 25variables. We let the Y variable be the type of drivetrain, which takes three values (rear, front, or four-wheel drive). The X variables are listed in Table 2.Three are unordered (manuf, type, and airbag, tak-ing 31, 6, and 3 values, respectively), two binary-valued (manual and domestic), and the rest ordered.The class frequencies are rather unequal: 16 (17.2%)are rear, 67 (72.0%) are front, and 10 (10.8%)are four-wheel drive vehicles. To avoid random-ness due to 10-fold cross-validation, we use leave-one-out (i.e., n-fold) cross-validation to prune theCRUISE, GUIDE, QUEST, and RPART trees in thisarticle.
+
+Figure 2 shows the results if the 31-valued vari-able manuf is excluded. The CHAID tree is not shownbecause it has no splits. The wide variety of variablesselected in the splits is due partly to differences be-tween the algorithms and partly to the absence of
+
+a dominant X variable. Variable passngr is chosenby three algorithms (C4.5, GUIDE QUEST); enginsz,fuel, length, and minprice by two; and hp, hwympg,luggage, maxprice, rev, type, and width by one each.Variables airbag, citympg, cylin, midprice, and rpmare not selected by any.
+
+When GUIDE does not find a suitable variableto split a node, it looks for a linear split on a pairof variables. One such split, on enginsz and rseat,occurs at the node marked with an asterisk (*) inthe GUIDE tree. Restricting the linear split to twovariables allows the data and the split to be displayedin a plot as shown in Figure 3. Clearly, no single spliton either variable alone can do as well in separatingthe two classes there.
+
+Figure 4 shows the C4.5, CRUISE, and GUIDEtrees when variable manuf is included. Now CHAID,QUEST, and RPART give no splits. Comparing themwith their counterparts in Figure 2, we see that theC4.5 tree is unchanged, the CRUISE tree has an ad-ditional split (on manuf) and the GUIDE tree is muchshorter. This behavior is not uncommon when thereare many variables with little or no predictive power:their introduction can substantially reduce the size ofa tree structure and its prediction accuracy; see, e.g.,Ref 19 for more empirical evidence.
+
+Table 3 reports the computational times usedto fit the tree models on a computer with a 2.66 GhzIntel Core 2 Quad Extreme processor. The fastest al-gorithm is C4.5, which takes milliseconds. If manufis excluded, the next fastest is RPART, at a tenth of asecond. But if manuf is included, RPART takes morethan 3 h—a 105-fold increase. This is a practical prob-lem with the CART algorithm; because manuf takes31 values, the algorithm must search through 230 − 1
+
+TABLE 1 Comparison of Classification Tree Methods. A Check Mark Indicates Presence of a Feature
+
+Feature C4.5 CART CHAID CRUISE GUIDE QUEST
+
+Unbiased Splits√ √ √
+
+Split Type u u,l u u,l u,l u,lBranches/Split ≥2 2 ≥2 ≥2 2 2Interaction Tests
+
+√ √ √ √ √User-specified Costs
+
+√ √ √ √ √User-specified Priors
+
+√ √ √ √Variable Ranking
+
+√ √Node Models c c c c,d c,k,n cBagging & Ensembles
+
+√Missing Values w s b i,s m i
+
+b, missing value branch; c, constant model; d, discriminant model; i, missing value imputation; k, kernel density model; l, linear splits;m, missing value category; n, nearest neighbor model; u, univariate splits; s, surrogate splits; w, probability weights
+
+16 Volume 1, January /February 2011c© 2011 John Wi ley & Sons , Inc .
+
+WIREs Data Mining and Knowledge Discovery Classification and regression trees
+
+TABLE 2 Predictor Variables for the Car Data
+
+Variable Description Variable Description
+
+manuf Manufacturer (31 values) rev Engine revolutions per miletype Type (small, sporty, compact, midsize, large, van) manual Manual transmission available (yes, no)minprice Minimum price (in $1000) fuel Fuel tank capacity (gallons)midprice Midrange price (in $1000) passngr Passenger capacity (persons)maxprice Maximum price (in $1000) length Length (inches)citympg City miles per gallon whlbase Wheelbase (inches)hwympg Highway miles per gallon width Width (inches)airbag Air bags standard (0, 1, 2) uturn U-turn space (feet)cylin Number of cylinders rseat Rear seat room (inches)enginzs Engine size (liters) luggage Luggage capacity (cu. ft.)hp Maximum horsepower weight Weight (pounds)rpm Revolutions per minute at maximum horsepower domestic Domestic (U.S./non-U.S.manufacturer)
+
+CRUISE QUEST RPARThwympg≤ 21.65
+
+enginsz–0.59 rseat≤ –13.14 *
+
+FIGURE 2 | CRUISE, QUEST, RPART, C4.5, and GUIDE trees for car data without manuf. The CHAID tree is trivial with no splits. At eachintermediate node, a case goes to the left child node if and only if the condition is satisfied. The predicted class is given beneath each leaf node.
+
+Vo lume 1, January /February 2011 17c© 2011 John Wi ley & Sons , Inc .
+
+Overview wires.wiley.com/widm
+
+Front wheel driveRear wheel drive
+
+FIGURE 3 | Data and split at the node marked with an asterisk (*) in the GUIDE tree in Figure 2.
+
+FIGURE 4 | CRUISE, C4.5, and GUIDE trees for car data with manufincluded. The CHAID, RPART, and QUEST trees are trivial with no splits.Sets S1 and S2 are (Plymouth, Subaru) and (Lexus, Lincoln, Mercedes,Mercury, Volvo), respectively, and S3 is the complement of S1 ∪ S2.
+
+(more than one billion) splits at the root node alone(if Y takes only two values, a computational shortcut6
+
+reduces the number of searches to just 30 splits). C4.5is not similarly affected because it does not search forbinary splits on unordered X variables. Instead, C4.5splits the node into one branch for each X value andthen merges some branches after the tree is grown.CRUISE, GUIDE, and QUEST also are unaffected be-cause they search exhaustively for splits on unorderedvariables only if the number of values is small. If thelatter is large, these algorithms employ a technique
+
+given in Ref 9 that uses linear discriminant analysison dummy variables to find the splits.
+
+Regression treesA regression tree is similar to a classification tree,except that the Y variable takes ordered values anda regression model is fitted to each node to give thepredicted values of Y. Historically, the first regressiontree algorithm is AID,20 which appeared several yearsbefore THAID. The AID and CART regression treemethods follow Algorithm 1, with the node impuritybeing the sum of squared deviations about the meanand the node predicting the sample mean of Y. Thisyields piecewise constant models. Although they aresimple to interpret, the prediction accuracy of thesemodels often lags behind that of models with moresmoothness. It can be computationally impracticable,however, to extend this approach to piecewise linearmodels, because two linear models (one for each childnode) must be fitted for every candidate split.
+
+M5’,21 an adaptation of a regression tree al-gorithm by Quinlan,22 uses a more computationallyefficient strategy to construct piecewise linear models.It first constructs a piecewise constant tree and thenfits a linear regression model to the data in each leafnode. Because the tree structure is the same as that ofa piecewise constant model, the resulting trees tend tobe larger than those from other piecewise linear tree
+
+18 Volume 1, January /February 2011c© 2011 John Wi ley & Sons , Inc .
+
+WIREs Data Mining and Knowledge Discovery Classification and regression trees
+
+TABLE 3 Tree Construction Times on a 2.66 Ghz Intel Core 2 Quad Extreme Processor for the Car Data.
+
+C4.5 CRUISE GUIDE QUEST RPART
+
+Without manuf 0.004s 3.57s 2.49s 2.26s 0.09sWith manuf 0.003s 4.00s 1.86s 2.54s 3h 2m
+
+methods. GUIDE23 uses classification tree techniquesto solve the regression problem. At each node, it fits aregression model to the data and computes the resid-uals. Then it defines a class variable Y′ taking values 1or 2, depending on whether the sign of the residual ispositive or not. Finally, it applies Algorithm 2 to theY′ variable to split the node into two. This approachhas three advantages: (1) the splits are unbiased;(2) only one regression model is fitted at each node;and (3) because it is based on residuals, the methodis neither limited to piecewise constant models norto the least squares criterion. Table 4 lists the mainfeatures of CART, GUIDE, and M5’.
+
+To compare CART, GUIDE, and M5’ with or-dinary least squares (OLS) linear regression, we ap-ply them to some data on smoking and pulmonaryfunction in children.24 The data, collected from 654children aged 3–19 years, give the forced expiratoryvolume (FEV, in liters), gender (sex, M/F), smokingstatus (smoke, Y/N), age (years), and height (ht, in.)of each child. Using an OLS model for predictingFEV that includes all the variables, Kahn25 found thatsmoke is the only one not statistically significant. Healso found a significant age–smoke interaction if htis excluded, but not if ht and its square are both in-cluded. This problem with interpreting OLS models
+
+often occurs when collinearity is present (the correla-tion between age and height is 0.8).
+
+Figure 5 shows five regression tree models: (1)GUIDE piecewise constant (with sample mean of Yas the predicted value in each node), (2) GUIDE bestsimple linear (with a linear regression model involv-ing only one predictor in each node), (3) GUIDEbest simple quadratic regression (with a quadraticmodel involving only one predictor in each node),(4) GUIDE stepwise linear (with a stepwise linear re-gression model in each node), and (5) M5’ piecewiseconstant. The CART tree (from RPART) is a sub-tree of (1), with six leaf nodes marked by asterisks(*). In the piecewise polynomial models (2) and (3),the predictor variable is found independently in eachnode, and nonsignificant terms of the highest ordersare dropped. For example, for model (b) in Figure 5, aconstant is fitted in the node containing females tallerthan 66.2 in. because the linear term for ht is not sig-nificant at the 0.05 level. Similarly, two of the threeleaf nodes in model (c) are fitted with first-degree poly-nomials in ht because the quadratic terms are not sig-nificant. Because the nodes, and hence the domains ofthe polynomials, are defined by the splits in the tree,the estimated regression coefficients typically vary be-tween nodes.
+
+TABLE 4 Comparison of Regression Tree Methods. A Check Mark Indicates Presenceof a Feature
+
+Feature CART GUIDE M5’
+
+Split type u,l u uBranches/Split 2 2 ≥2Interaction Tests
+
+√ √ √Variable Importance Ranking
+
+√ √Node Models c c,m,p,r c,rMissing Value Methods s a gLoss Criteria v v,w vBagging & Ensembles
+
+a, missing value category; c, constant model; g, global mean/mode imputation; l, linear splits; m, multiple linearmodel; p, polynomial model; r, stepwise linear model; s, surrogate splits; u, univariate splits; v, least squares;w, least median of squares, quantile, Poisson, and proportional hazards.
+
+Vo lume 1, January /February 2011 19c© 2011 John Wi ley & Sons , Inc .
+
+Overview wires.wiley.com/widm
+
+(a) GUIDE constant (b) GUIDE simple linearht ≤61.5
+
+(c) GUIDE (d) GUIDE (e) M5’ constantsimple stepwisequadratic linear
+
+FIGURE 5 | GUIDE piecewise constant, simple linear, simplequadratic, and stepwise linear, and M5’ piecewise constant regressiontrees for predicting FEV. The RPART tree is a subtree of (a), with leafnodes marked by asterisks (*). The mean FEV and linear predictors(with signs of the coefficients) are printed beneath each leaf node.Variable ht2 is the square of ht.
+
+Because the total model complexity is shared be-tween the tree structure and the set of node models,the complexity of a tree structure often decreases asthe complexity of the node models increases. There-fore, the user can choose a model by trading off treestructure complexity against node model complexity.Piecewise constant models are mainly used for the in-sights that their tree structures provide. But they tendto have low prediction accuracy, unless the data aresufficiently informative and plentiful to yield a treewith many nodes. The trouble is that the larger thetree, the harder it is to derive insight from it. Trees (1)and (5) are quite large, but because they split almostexclusively on ht, we can infer from the predicted val-ues in the leaf nodes that FEV increases monotonicallywith ht.
+
+The piecewise simple linear (2) and quadratic (3)models reduce tree complexity without much loss (ifany) of interpretability. Instead of splitting the nodes,ht now serves exclusively as the predictor variable ineach node. This suggests that ht has strong linear andpossibly quadratic effects. On the contrary, the splitson age and sex point to interactions between themand ht. These interactions can be interpreted with
+
+ht ≤ 66.2 in., age ≤ 10 yearsht ≤ 66.2 in., age > 10 yearsht > 66.2 in., femaleht > 66.2 in., male, age ≤ 12 yearsht > 66.2 in., male, age > 12 years
+
+FIGURE 6 | Data and fitted regression lines in the five leaf nodesof the GUIDE piecewise simple linear model in Figure 5(b).
+
+the help of Figures 6 and 7, which plot the data val-ues of FEV and ht and the fitted regression functionswith a different symbol and color for each node. InFigure 6, the slope of ht is zero for the group offemales taller than 66.2 in., but it is constant andnonzero across the other groups. This indicates athree-way interaction involving age, ht, and sex. Asimilar conclusion can be drawn from Figure 7, inwhich there are only three groups, with the group ofchildren aged 11 years or below exhibiting a quadraticeffect of ht on FEV. For children above the age of 11years, the effect of ht is linear, but males have, on av-erage, about a half liter more FEV than females. Thus,the effect of sex seems to be due mainly to childrenolder than 11 years. This conclusion is reinforced bythe piecewise stepwise linear tree in Figure 5(d), inwhich a stepwise linear model is fitted to each of thetwo leaf nodes. Age and ht are selected as linear pre-dictors in both leaf nodes, but sex is selected only inthe node corresponding to children taller than 66.5in., 70% of whom are above 11 years old.
+
+Figure 8 plots the observed versus predicted val-ues of the four GUIDE models and two OLS mod-els containing all the variables, without and with thesquare of height. The discreteness of the predictedvalues from the piecewise constant model is obvious,as is the curvature in plot (e). The piecewise simplequadratic model in plot (c) is strikingly similar to plot(f), where the OLS model includes squared ht. Thissuggests that the two models have similar predictionaccuracy. Model (3) has an advantage over model(6), however, because the former can be interpretedthrough its tree structure and the graph of its fittedfunction in Figure 7.
+
+This example shows that piecewise linear regres-sion tree models can be valuable in providing visualinformation about the roles and relative importance
+
+20 Volume 1, January /February 2011c© 2011 John Wi ley & Sons , Inc .
+
+WIREs Data Mining and Knowledge Discovery Classification and regression trees
+
+Age≤ 11 yearsAge> 11 years, femaleAge> 11 years, male
+
+FIGURE 7 | Data and fitted regression functions in the three leaf nodes of the GUIDE piecewise simple quadratic model in Figure 5(c).
+
+(b) GUIDE simple linear
+
+(c) GUIDE simple quadratic
+
+(d) GUIDE stepwise linear
+
+FIGURE 8 | Observed versus predicted values for the tree models in Figure 5 and two ordinary least squares models.
+
+Vo lume 1, January /February 2011 21c© 2011 John Wi ley & Sons , Inc .
+
+Overview wires.wiley.com/widm
+
+of the predictor variables. For more examples, seeRefs 26 and 27.
+
+On the basis of the published empirical comparisonsof classification tree algorithms, GUIDE appears tohave, on average, the highest prediction accuracy andRPART the lowest, although the differences are notsubstantial for univariate splits.12 RPART trees of-ten have fewer leaf nodes than those of CRUISE,GUIDE, and QUEST, whereas C4.5 trees often havethe most by far. If linear combination splits are used,CRUISE and QUEST can yield accuracy as high asthe best nontree methods.10,11,28 The computationalspeed of C4.5 is almost always the fastest, whereasRPART can be fast or extremely slow, with the lat-ter occurring when Y takes more than two valuesand there are unordered variables taking many val-ues (owing to its coding, the RPART software maygive incorrect results if there are unordered vari-ables with more than 32 values). GUIDE piecewise
+
+linear regression tree models typically have higherprediction accuracy than piecewise constant models.Empirical results29 show that the accuracy of thepiecewise linear trees can be comparable to thatof spline-based methods and ensembles of piecewiseconstant trees.
+
+Owing to space limitations, other approachesand extensions are not discussed here. For likelihoodand Bayesian approaches, see Refs 30 and 31,and Refs 32 and 33, respectively. For Poisson andlogistic regression trees, see Refs 34 and 35, andRefs 36 and 37, respectively. For quantile regressiontrees, see Ref 38. For regression trees applicable tocensored data, see Refs 39–43. Asymptotic theoryfor the consistency of the regression tree functionand derivative estimates may be found in Refs 26,34, and 44. The C source code for C4.5 may beobtained from http://www.rulequest.com/Personal/.RPART may be obtained from http://www.R-project.org. M5’ is part of the WEKA21 packageat http://www.cs.waikato.ac.nz/ml/weka/. Softwarefor CRUISE, GUIDE and QUEST may be obtainedfrom http://www/stat.wisc.edu/∼loh/.
+
+CART is a registered trademark of California Statistical Software, Inc.
+
+1. Fisher RA. The use of multiple measurements in taxo-nomic problems. Ann Eugen 1936, 7:179–188.
+
+2. Cover T, Hart P. Nearest neighbor pattern classifica-tion. IEEE Trans Inf Theory 1967, 13:21–27.
+
+3. Fielding A, O’Muircheartaigh CA. Binary segmenta-tion in survey analysis with particular reference to AID.The Statistician 1977, 25:17–28.
+
+4. Messenger R, Mandell L. A modal search techniquefor predictive nominal scale multivariate analysis. J AmStat Assoc 1972, 67:768–772.
+
+5. Quinlan JR. C4.5: Programs for Machine Learning.San Mateo: Morgan Kaufmann; 1993.
+
+6. Breiman L, Friedman JH, Olshen RA, Stone CJ. Clas-sification and Regression Trees. CRC Press; 1984.
+
+7. R Development Core Team, R: a language and envi-ronment for statistical computing. R Foundation forStatistical Computing, Vienna, Austria, 2009.
+
+8. Therneau TM, Atkinson B. RPART: recursive parti-tioning. R port by B. Ripley. R package version 3.1-41,2008.
+
+9. Loh WY, Vanichsetakul N. Tree-structured classifica-tion via generalized discriminant analysis (with discus-sion). J Am Stat Assoc 1988, 83:715–728.
+
+10. Kim H, Loh WY. Classification trees with unbiasedmultiway splits. J Am Stat Assoc 2001, 96:589–604.
+
+11. Kim H, Loh WY. Classification trees with bivariatelinear discriminant node models. J Comput GraphicalStat 2003, 12:512–530.
+
+12. Loh WY, Chen C, Hordle W, Unwin A, eds. Improv-ing the precision of classification trees. Ann Appl Stat2009, 3:1710–1737.
+
+13. Loh WY, Shih Y. Split selection methods for classifica-tion trees. Stat Sin 1997, 7:815–840.
+
+14. Hothorn T, Hornik K, Zeileis A. Unbiased recur-sive partitioning: a conditional inference framework.J Comput Graphical Stat 2006, 15:651–674.
+
+15. Kass GV. An exploratory technique for investigatinglarge quantities of categorical data. Appl Stat 1980,29:119–127.
+
+22 Volume 1, January /February 2011c© 2011 John Wi ley & Sons , Inc .
+
+WIREs Data Mining and Knowledge Discovery Classification and regression trees
+
+16. Breiman L. Bagging predictors. Machine Learning1996, 24:123–140.
+
+17. Breiman L. Random forests. Machine Learning 2001,45:5–32.
+
+18. Lock RH. 1993 New car data. Journal of Statistics Ed-ucation, 1993. 1(1). www.amstat.org/publications/jse/v1n1/datasets.lock.html
+
+19. Doksum K, Tang S, Tsui KW. Nonparametric vari-able selection: the EARTH algorithm. J Am Stat Assoc2008, 103:1609–1620.
+
+20. Morgan JN, Sonquist JA. Problems in the analysis ofsurvey data, and a proposal. J Am Stat Assoc 1963,58:415–434.
+
+21. Witten I, Frank E. Data Mining: practical MachineLearning Tools and Techniques, 2nd ed. San Francisco:Morgan Kaufmann; 2005.
+
+22. Quinlan JR. Learning with continuous classes. Pro-ceedings of the 5th Australian Joint Conference on Ar-tificial Intelligence 1992, 343–348.
+
+23. Loh WY. Regression trees with unbiased variable selec-tion and interaction detection. Stat Sin 2002, 12:361–386.
+
+24. Rosner B. Fundamentals of Biostatistics, 5th ed.Duxbury MA: Pacific Grove; 1999.
+
+25. Kahn M. An exhalent problem for teaching statis-tics. J Stat Education 2005, 13(2). www.amstat.org/publications/jse/v13n2/datasets.kahn.html.
+
+26. Kim H, Loh WY, Shih YS, Chaudhuri P. Visu-alizable and interpretable regression models withgood prediction power. IIE Trans 2007, 39:565–579.
+
+27. Loh WY. Regression by parts: fitting visually inter-pretable models with GUIDE. In: Chen C, Hordle W,Unwin A, eds. Handbook of Data Visualization. NewYork: Springer; 2008, 447–469.
+
+28. Lim TS, Loh WY, Shih YS. A comparison of predictionaccuracy, complexity, and training time of thirty-threeold and new classification algorithms. Machine Learn-ing 2000, 40:203–228.
+
+29. Loh WY, Chen CW, Zheng W. Extrapolation errors inlinear model trees. ACM Trans on Knowledge Discovfrom Data 2007, 1(2).
+
+30. Ciampi A. Generalized regression trees. Comput StatData Anal 1991, 12:57–78.
+
+31. Su X, Wang M, Fan J. Maximum likelihood regressiontrees. J Comput Graphical Stat 2004, 13:586–598.
+
+32. Chipman HA, George EI, McCulloch RE. BayesianCART model search (with discussion). J Am Stat Assoc1998, 93:935–960.
+
+33. Denison DGT, Mallick BK, Smith AFM. A BayesianCART algorithm. Biometrika 1998, 85:362–377.
+
+34. Chaudhuri P, Lo WD, Loh WY, Yang CC. Generalizedregression trees. Stat Sin 1995, 5:641–666.
+
+35. Loh WY. Regression tree models for designed exper-iments. IMS Lecture Notes-Monograph Series 2006,49:210–228.
+
+36. Chan KY, Loh WY. LOTUS: an algorithm for buildingaccurate and comprehensible logistic regression trees.J Comput Graphical Stat 2004, 13:826–852.
+
+37. Loh WY. Logistic regression tree analysis. In: PhamH, ed. Handbook of Engineering Statistics. London:Springer; 2006, 537–549.
+
+38. Chaudhuri P, Loh WY. Nonparametric estimation ofconditional quantiles using quantile regression trees.Bernoulli 2002, 8:561–576.
+
+39. Ahn H. Tree-structured exponential regression model-ing. Biometrical 2007, 36:43–61.
+
+40. Ahn H, Loh WY. Tree-structured proportional hazardsregression modeling. Biometrics 1994, 50:471–485.
+
+41. Cho HJ, Hong SM. Median regression tree for anal-ysis of censored survival data. IEEE Trans Syst, ManCybern, Part A 2008, 383:715–726.
+
+42. LeBlanc M, Crowley J. Relative risk trees for censoredsurvival data. Biometrics 1992, 48:411–424.
+
+43. Chaudhuri P, Huang MC, Loh WY, Yao R. Piecewise-polynomial regression trees. Stat Sin 1994, 4:143–167.
+
+44. Segal MR. Regression trees for censored data. Biomet-rics 1988, 44:35–47.
+
+E. Alpaydin. Introduction to Machine Learning. 2nd ed. Boston: MIT Press; 2010.
+
+Volume 1, January /February 2011 23c© 2011 John Wi ley & Sons , Inc .

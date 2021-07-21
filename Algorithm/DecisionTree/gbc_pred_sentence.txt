@@ -1,0 +1,20 @@
+0.9997926628824378 : MedianIncome < 2.51025
+0.9995813841725621 : FIGURE 4 | CRUISE, C4.5, and GUIDE trees for car data with manufincluded. The CHAID, RPART, and QUEST trees are trivial with no splits.Sets S1 and S2 are (Plymouth, Subaru) and (Lexus, Lincoln, Mercedes,Mercury, Volvo), respectively, and S3 is the complement of S1 ∪ S2.
+0.9995807964566208 : 3.3.4 Neyman-Pearson Approach
+0.9994600795650017 : 11.8811.6111.7311.2011.2911.64
+0.9987171812417621 : Figure 2: Regression tree for predicting California housing prices from geo-graphic coordinates. At each internal node, we ask the associated question, andgo to the left child if the answer is “yes”, to the right child if the answer is “no”.Note that leaves are labeled with log prices; the plotting function isn’t flexibleenough, unfortunately, to apply transformations to the labels.
+0.9987147188304615 : 12.54 12.1412.09 11.16
+0.9980828640718754 : Uncertainty in Regression Trees
+0.9980792456325199 : 2.1 Example: California Real Estate Again
+0.9980564608242478 : 12.4512.7312.2111.88
+0.99792164615471 : (d) GUIDE stepwise linear
+0.9977852428820008 : we prune it back using (say) cross-validation. The differences from regression-tree growing have to do with (1) how we measure information, (2) what kind ofpredictions the tree makes, and (3) how we measure predictive error.
+0.9975481726729487 : We will see more uses for bootstrapped trees next time, when we look athow to combine trees into forests.
+0.9974963015282546 : 7Technically, if our model gets the class probabilities right, then the model’s predictionsare just as informative as the original data. We then say that the predictions are a sufficientstatistic for forecasting the class. In fact, if the model gets the exact probabilities wrong, buthas the correct partition of the feature space, then its prediction is still a sufficient statistic.Under any loss function, the optimal strategy can be implemented using only a sufficientstatistic, rather than needing the full, original data. This is an interesting but much moreadvanced topic; see, e.g., Blackwell and Girshick (1954) for details.
+0.9970285040525652 : Figure 4 shows the tree itself; with 68 nodes, the plot is fairly hard to read,but by zooming in on any part of it, you can check what it’s doing. Figure 5shows the corresponding partition. It’s obviously much finer-grained than thatin Figure 3, and does a better job of matching the actual prices (RMS error0.32). More interestingly, it doesn’t just uniformly divide up the big cells fromthe first partition; some of the new cells are very small, others quite large. Themetropolitan areas get a lot more detail than the Mojave.
+0.9968743346728307 : 2 Regression Trees 42.1 Example: California Real Estate Again . . . . . . . . . . . . . . . 42.2 Regression Tree Fitting . . . . . . . . . . . . . . . . . . . . . . . 7
+0.9968112758594284 : b, missing value branch; c, constant model; d, discriminant model; i, missing value imputation; k, kernel density model; l, linear splits;m, missing value category; n, nearest neighbor model; u, univariate splits; s, surrogate splits; w, probability weights
+0.996797070314483 : 3. Fielding A, O’Muircheartaigh CA. Binary segmenta-tion in survey analysis with particular reference to AID.The Statistician 1977, 25:17–28.
+0.9959968930110269 : using only the data points in that leaf (and using dummy variables for non-quantitativefeatures). This would give a piecewise-linear model, rather than a piecewise-constant one.If we’ve built the tree well, however, all the points in each leaf are pretty similar, so theregression surface would be nearly constant anyway.
+0.9959675709286707 : 1. Suppose that we see each of k classes ni times, with∑k
+0.9958949139797043 : Here “deviance” is just mean squared error; this gives us an RMS error of 0.41,which is higher than the models in the last handout, but not shocking sincewe’re using only two variables, and have only twelve nodes.
